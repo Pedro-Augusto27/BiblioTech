@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/style.css">
+    <title>Minha Prateleira - Biblioteca Conect</title>
+</head>
+<body>
+   <header class="main-header">
+    <div class="header-content">
+        <h1>📖 Biblioteca Conect</h1>
+        <nav class="nav-menu">
+            <a href="../../index.html" class="active">Login</a>
+            <a href="./src/pages/bibliotecaria.html">Painel Admin</a>
+            <a href="./src/pages/prateleira.html">Minha Prateleira</a>
+        </nav>
+    </div>
+</header>
+    <main style="max-width: 1000px; margin: 0 auto; padding: 20px;">
+        <div class="container" style="margin-bottom: 20px; text-align: center;">
+            <h2 id="saudacaoLeitor">Bem-vindo, Leitor!</h2>
+            <p>Aqui você pode ver os seus livros alugados e o prazo de devolução.</p>
+        </div>
+
+        <div class="container">
+            <h3 style="border-bottom: 2px solid #0056b3; padding-bottom: 10px; margin-bottom: 20px;">
+                📖 Meus Livros Emprestados
+            </h3>
+            
+            <div id="meusLivrosCards" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+                </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="logoutCliente()" style="background-color: #666; padding: 10px 30px;">Fazer Logout / Sair</button>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Biblioteca Conect. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="../scripts/script.js"></script>
+</body>
+</html>

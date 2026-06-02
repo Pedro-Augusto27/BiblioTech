@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../styles/style.css">
+    <title>Painel da Bibliotecária - Biblioteca Conect</title>
+</head>
+
+<body>
+    <header class="main-header">
+        <div class="header-content">
+            <h1>📖 Biblioteca Conect</h1>
+            <nav class="nav-menu">
+                <a href="../../index.html">Login</a>
+                <a href="./bibliotecaria.html" class="active">Painel Admin</a>
+                <a href="./prateleira.html">Minha Prateleira</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="admin-grid"
+        style="max-width: 1200px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+
+        <section class="container" style="grid-column: 1;">
+            <h2>📋 Gestão de Clientes (Leitores)</h2>
+            <label for="cadNome">Nome Completo:</label>
+            <input type="text" id="cadNome" placeholder="Nome completo do leitor">
+
+            <label for="cadCPF">CPF:</label>
+            <input type="text" id="cadCPF" placeholder="000.000.000-00">
+
+            <label for="cadEmail">E-mail:</label>
+            <input type="email" id="cadEmail" placeholder="email@exemplo.com">
+
+            <button onclick="cadastrarCliente()">Salvar no Sistema</button>
+
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ccc;">
+
+            <h3>👥 Leitores Cadastrados</h3>
+            <ul id="listaClientes" style="list-style-type: none; padding: 0; max-height: 200px; overflow-y: auto;"></ul>
+        </section>
+
+        <section class="container" style="grid-column: 2;">
+            <h2>🔍 Busca Inteligente de Livros (Open Library API)</h2>
+            <p>Digite o título do livro para puxar os dados automaticamente.</p>
+
+            <div style="margin-bottom: 15px;">
+                <label for="inputLivro">Título do Livro:</label>
+                <input type="text" id="inputLivro" placeholder="Ex: O Pequeno Príncipe"
+                    style="width: 100%; padding: 12px; font-size: 16px; color: #333333; background-color: #ffffff; border: 2px solid #cbd5e1; margin-bottom: 10px;">
+
+                <button onclick="buscarLivroAPI()" style="background-color: #0056b3; height: 45px;">Pesquisar Livro</button>
+            </div>
+
+            <div id="feedbackBusca" style="margin-top: 10px; font-weight: bold; color: #555;"></div>
+
+            <div id="resultadoLivro" style="margin-top: 15px; display: none; padding: 15px; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
+                <img id="livroCapa" src="" alt="Capa do Livro" style="max-height: 180px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;">
+                <h4 id="livroTitulo" style="margin: 5px 0;"></h4>
+                <p id="livroAutor" style="color: #666; margin: 5px 0; font-size: 14px;"></p>
+                <button onclick="selecionarParaEmprestimo()" style="background-color: #28a745; margin-top: 10px;">Selecionar para Empréstimo</button>
+            </div>
+        </section>
+
+        <section class="container" style="grid-column: 1 / span 2; background-color: #f9f9f9; border: 2px solid #0056b3;">
+            <h2>🤝 Realizar Novo Empréstimo</h2>
+            <p>Selecione um cliente cadastrado e o livro buscado acima para finalizar.</p>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 15px;">
+                <div>
+                    <label><strong>1. Selecione o Cliente:</strong></label>
+                    <select id="selectClientes" style="width: 100%; padding: 8px; margin-top: 5px;"></select>
+                </div>
+                <div>
+                    <label><strong>2. Livro Selecionado:</strong></label>
+                    <div id="livroSelecionadoTexto"
+                        style="padding: 10px; background: #fff; border: 1px dashed #aaa; margin-top: 5px; font-style: italic; color: #555;">
+                        Nenhum livro seleccionado ainda. Busque um livro acima.
+                    </div>
+                </div>
+            </div>
+
+            <button onclick="finalizarEmprestimo()"
+                style="width: 100%; background-color: #0056b3; font-size: 16px;">Finalizar Empréstimo</button>
+        </section>
+
+        <section class="container" style="grid-column: 1 / span 2;">
+            <h2>📅 Empréstimos Ativos</h2>
+            <div id="cardsEmprestimos"
+                style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; margin-top: 15px;">
+            </div>
+        </section>
+
+        <div style="grid-column: 1 / span 2; text-align: center; margin-top: 20px;">
+            <button onclick="window.location.href='../../index.html'"
+                style="background-color: #666; padding: 10px 30px;">Sair do Painel Administrativo</button>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Biblioteca Conect. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="../scripts/script.js"></script>
+</body>
+
+</html>
