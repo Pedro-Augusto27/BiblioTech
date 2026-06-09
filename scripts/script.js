@@ -183,7 +183,7 @@ function carregarSelectClientes() {
 
     listaClientes.forEach(cliente => {
         const option = document.createElement('option');
-        option.value = cliente.email;
+        option.value = cliente.email; // Usa o e-mail como valor único para identificação
         option.innerText = `${cliente.nome} (CPF: ${cliente.cpf})`;
         select.appendChild(option);
     });
@@ -191,20 +191,21 @@ function carregarSelectClientes() {
 
 function finalizarEmprestimo() {
     const clienteSelecionado = document.getElementById('selectClientes').value;
+    // Busca o objeto completo do cliente usando o e-mail selecionado no <select>
     const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
     const clienteObjeto = clientes.find(cliente => cliente.email === clienteSelecionado);
 
     // Tratamento de Erros: Verifica se os dados necessários estão prontos
-    if (!clienteSelecionado) {
-        alert("Erro: Você precisa selecionar um Cliente cadastrado!");
+    if (!clienteSelecionado) { // Erro em selecionar cliente
+        alert("Erro: Você precisa selecionar um cliente cadastrado!");
         return;
     }
-    if (!clienteObjeto) {
+    if (!clienteObjeto) { // Erro em cliente não estar no cadastro
         alert("Erro: Cliente selecionado não encontrado no cadastro!");
         return;
     }
-    if (!livroSelecionado) {
-        alert("Erro: Você precisa buscar e Selecionar um Livro primeiro!");
+    if (!livroSelecionado) { // Erro em livro não estar selecionado
+        alert("Erro: Você precisa buscar e selecionar um livro primeiro!");
         return;
     }
 
@@ -213,10 +214,10 @@ function finalizarEmprestimo() {
     dataHoje.setDate(dataHoje.getDate() + 7);
     const dataFormatada = dataHoje.toLocaleDateString('pt-BR');
 
-    // Criação do objeto complexo conforme o enunciado
+    // Criação do objeto complexo
     const novoEmprestimo = {
-        cliente: clienteObjeto.nome,
-        clienteEmail: clienteObjeto.email,
+        cliente: clienteObjeto.nome, // Armazena o nome para exibição, mas o e-mail é a referência única para filtragem
+        clienteEmail: clienteObjeto.email, // Armazena o e-mail para identificação única do cliente nos filtros
         livroTitulo: livroSelecionado.titulo,
         livroCapa: livroSelecionado.capa,
         devolucao: dataFormatada
