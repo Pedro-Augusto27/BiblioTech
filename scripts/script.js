@@ -14,23 +14,24 @@ document.addEventListener("DOMContentLoaded", function() {
 // SISTEMA DE LOGIN
 // ==========================================
 function fazerLogin() {
-    const usuario = document.getElementById('nome').value.trim();
+    // const usuario = document.getElementById('nome').value.trim();
     const email = document.getElementById('email').value.trim();
     const senha = document.getElementById('senha').value.trim();
 
-    if (usuario === "" || email === "" || senha === "") {
+    if (email === "" || senha === "") {
         alert('Por favor, preencha todos os campos para entrar.');
         return; 
     }
 
-    if (usuario === 'Bibliotecaria' && email === 'admin@gmail.com' && senha === 'admin123') {
-        window.location.href = './src/pages/bibliotecaria.html';
+    if (email === 'admin@gmail.com' && senha === 'admin123') {
+        window.location.href = 'pages/bibliotecaria.html';
     } else if (email.includes('@') && senha.length >= 4) {
-        // NOVIDADE: Salva quem é o usuário logado no momento antes de ir para a prateleira
-        localStorage.setItem('usuarioLogado', usuario);
+
+        // Salva quem é o usuário logado no momento antes de ir para a prateleira
+        // localStorage.setItem('usuarioLogado', usuario);
         
-        alert(`Seja bem-vindo, ${usuario}!`);
-        window.location.href = './src/pages/prateleira.html';
+        // alert(`Seja bem-vindo, ${usuario}!`);
+        window.location.href = 'pages/prateleira.html';
     } else {
         alert('Por favor, insira um e-mail válido e uma senha com no mínimo 4 caracteres.');
     }
