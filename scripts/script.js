@@ -27,10 +27,11 @@ function fazerLogin() {
         window.location.href = 'pages/bibliotecaria.html';
     } else if (email.includes('@') && senha.length >= 4) {
 
-        // Salva quem é o usuário logado no momento antes de ir para a prateleira
-        // localStorage.setItem('usuarioLogado', usuario);
+        // Salva o e-mail do leitor para a prateleira conseguir filtrar os empréstimos
+        localStorage.setItem('usuarioLogado', email.toLowerCase());
         
         // alert(`Seja bem-vindo, ${usuario}!`);
+
         window.location.href = 'pages/prateleira.html';
     } else {
         alert('Por favor, insira um e-mail válido e uma senha com no mínimo 4 caracteres.');
@@ -42,9 +43,9 @@ function fazerLogin() {
 // PARTE A: GESTÃO DE CLIENTES
 // ==========================================
 function cadastrarCliente() {
-    const nome = document.getElementById('cadNome').value.trim();
-    const cpf = document.getElementById('cadCPF').value.trim();
-    const email = document.getElementById('cadEmail').value.trim();
+    const nome = document.getElementById('cadNome').value.trim(); // Nome do cliente
+    const cpf = document.getElementById('cadCPF').value.trim(); // CPF do cliente
+    const email = document.getElementById('cadEmail').value.trim(); // E-mail do cliente
 
     // Tratamento de erro/validação exigido
     if (nome === "" || cpf === "" || email === "") {
@@ -66,6 +67,7 @@ function cadastrarCliente() {
     alert("Cliente cadastrado com sucesso!");
 }
 
+// Gera a lista visual dos clientes cadastrados, ou uma mensagem caso esteja vazia
 function carregarClientes() {
     const listaUI = document.getElementById('listaClientes');
     if (!listaUI) return; 
@@ -91,7 +93,7 @@ function carregarClientes() {
 // ==========================================
 // PARTE B: BUSCA DE LIVROS (ASYNC & API)
 // ==========================================
-async function buscarLivroAPI() {
+async function buscarLivroAPI() { // Busca livro na API da Open Library
     const termo = document.getElementById('inputLivro').value.trim();
     const feedback = document.getElementById('feedbackBusca');
     const resultadoDiv = document.getElementById('resultadoLivro');
@@ -181,7 +183,7 @@ function carregarSelectClientes() {
 
     listaClientes.forEach(cliente => {
         const option = document.createElement('option');
-        option.value = cliente.nome;
+        option.value = cliente.email;
         option.innerText = `${cliente.nome} (CPF: ${cliente.cpf})`;
         select.appendChild(option);
     });
@@ -189,10 +191,16 @@ function carregarSelectClientes() {
 
 function finalizarEmprestimo() {
     const clienteSelecionado = document.getElementById('selectClientes').value;
+    const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+    const clienteObjeto = clientes.find(cliente => cliente.email === clienteSelecionado);
 
     // Tratamento de Erros: Verifica se os dados necessários estão prontos
     if (!clienteSelecionado) {
         alert("Erro: Você precisa selecionar um Cliente cadastrado!");
+        return;
+    }
+    if (!clienteObjeto) {
+        alert("Erro: Cliente selecionado não encontrado no cadastro!");
         return;
     }
     if (!livroSelecionado) {
@@ -207,7 +215,8 @@ function finalizarEmprestimo() {
 
     // Criação do objeto complexo conforme o enunciado
     const novoEmprestimo = {
-        cliente: clienteSelecionado,
+        cliente: clienteObjeto.nome,
+        clienteEmail: clienteObjeto.email,
         livroTitulo: livroSelecionado.titulo,
         livroCapa: livroSelecionado.capa,
         devolucao: dataFormatada
@@ -281,13 +290,26 @@ function carregarPrateleiraCliente() {
 
     if (!containerCards) return;
 
+    const usuarioLogado = (localStorage.getItem('usuarioLogado') || "").toLowerCase();
     const nomeUsuario = localStorage.getItem('usuarioLogado') || "Leitor";
+    const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+    const clienteLogado = clientes.find(cliente => (cliente.email || "").toLowerCase() === usuarioLogado);
+    const nomeClienteLogado = (clienteLogado?.nome || "").toLowerCase();
     if (saudacao) {
         saudacao.innerText = `👋 Olá, ${nomeUsuario}! Bem-vindo à sua prateleira.`;
     }
 
     let listaEmprestimos = JSON.parse(localStorage.getItem('emprestimos')) || [];
-    let meusLivros = listaEmprestimos.filter(emp => emp.cliente.toLowerCase() === nomeUsuario.toLowerCase());
+    let meusLivros = listaEmprestimos.filter(emp => {
+        const emailEmprestimo = (emp.clienteEmail || "").toLowerCase();
+        const nomeEmprestimo = (emp.cliente || "").toLowerCase();
+
+        if (!usuarioLogado) {
+            return true;
+        }
+
+        return emailEmprestimo === usuarioLogado || nomeEmprestimo === usuarioLogado || nomeEmprestimo === nomeClienteLogado;
+    });
 
     containerCards.innerHTML = "";
 
