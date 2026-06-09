@@ -15,14 +15,16 @@
             <nav class="nav-menu">
                 <a href="../index.html">Login</a>
                 <a href="./bibliotecaria.html" class="active">Painel Admin</a>
-                <a href="./prateleira.html">Minha Prateleira</a>
+                <!-- <a href="./prateleira.html">Minha Prateleira</a> -->
             </nav>
         </div>
     </header>
 
+    
     <main class="admin-grid"
         style="max-width: 1200px; margin: 0 auto; padding: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-
+        
+        <!-- Parte da Gestão de Clientes -->
         <section class="container" style="grid-column: 1;">
             <h2>📋 Gestão de Clientes (Leitores)</h2>
             <label for="cadNome">Nome Completo:</label>
@@ -42,10 +44,12 @@
             <ul id="listaClientes" style="list-style-type: none; padding: 0; max-height: 200px; overflow-y: auto;"></ul>
         </section>
 
+        <!-- Parte de Busca de Livros -->
         <section class="container" style="grid-column: 2;">
             <h2>🔍 Busca Inteligente de Livros (Open Library API)</h2>
             <p>Digite o título do livro para puxar os dados automaticamente.</p>
 
+            <!-- Input para busca do livro -->
             <div style="margin-bottom: 15px;">
                 <label for="inputLivro">Título do Livro:</label>
                 <input type="text" id="inputLivro" placeholder="Ex: O Pequeno Príncipe"
@@ -54,6 +58,7 @@
                 <button onclick="buscarLivroAPI()" style="background-color: #0056b3; height: 45px;">Pesquisar Livro</button>
             </div>
 
+            <!-- Feedback de busca serve para exibir mensagens de status, como: Capa, Título, Autor -->
             <div id="feedbackBusca" style="margin-top: 10px; font-weight: bold; color: #555;"></div>
 
             <div id="resultadoLivro" style="margin-top: 15px; display: none; padding: 15px; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
@@ -64,6 +69,7 @@
             </div>
         </section>
 
+        <!-- Parte de Realização de Empréstimos -->
         <section class="container" style="grid-column: 1 / span 2; background-color: #f9f9f9; border: 2px solid #0056b3;">
             <h2>🤝 Realizar Novo Empréstimo</h2>
             <p>Selecione um cliente cadastrado e o livro buscado acima para finalizar.</p>
@@ -86,6 +92,7 @@
                 style="width: 100%; background-color: #0056b3; font-size: 16px;">Finalizar Empréstimo</button>
         </section>
 
+        <!-- Parte de Exibição de Empréstimos Ativos -->
         <section class="container" style="grid-column: 1 / span 2;">
             <h2>📅 Empréstimos Ativos</h2>
             <div id="cardsEmprestimos"

@@ -1,6 +1,7 @@
 // Variáveis globais para armazenar temporariamente o livro selecionado na busca da API
 let livroTemporario = null;
 let livroSelecionado = null;
+let livroTemporarioPrat = null; // livro buscado diretamente na prateleira (cliente)
 
 // Executado ao carregar qualquer página
 document.addEventListener("DOMContentLoaded", function() {
@@ -342,4 +343,99 @@ function carregarPrateleiraCliente() {
 function logoutCliente() {
     localStorage.removeItem('usuarioLogado'); // Limpa o login
     window.location.href = '../index.html'; // Volta para a tela inicial
+}
+
+// Busca usada pela página da prateleira (cliente)
+async function buscarLivroAPIPrateleira() {
+    const termo = document.getElementById('inputLivroPrat').value.trim();
+    const feedback = document.getElementById('feedbackBuscaPrat');
+    const resultadoDiv = document.getElementById('resultadoLivroPrat');
+
+    if (termo === "") {
+        alert("Digite o nome de um livro para pesquisar!");
+        return;
+    }
+
+    feedback.innerText = "🔍 Buscando livro na Open Library... Aguarde.";
+    feedback.style.color = "#0056b3";
+    resultadoDiv.style.display = "none";
+    livroTemporarioPrat = null;
+
+    try {
+        const resposta = await fetch(`https://openlibrary.org/search.json?q=${encodeURIComponent(termo)}&limit=1`);
+        if (!resposta.ok) throw new Error('Erro de conexão com a API');
+        const dados = await resposta.json();
+        if (!dados.docs || dados.docs.length === 0) {
+            feedback.innerText = "❌ Nenhum livro encontrado com esse título. Tente outro.";
+            feedback.style.color = "#d9534f";
+            return;
+        }
+
+        const infoLivro = dados.docs[0];
+        const titulo = infoLivro.title;
+        const autor = infoLivro.author_name ? infoLivro.author_name[0] : "Autor Desconhecido";
+        let URLcapa = "https://via.placeholder.com/150x200?text=Sem+Capa";
+        if (infoLivro.cover_i) URLcapa = `https://covers.openlibrary.org/b/id/${infoLivro.cover_i}-M.jpg`;
+
+        livroTemporarioPrat = { titulo, autor, capa: URLcapa };
+
+        document.getElementById('livroCapaPrat').src = URLcapa;
+        document.getElementById('livroTituloPrat').innerText = titulo;
+        document.getElementById('livroAutorPrat').innerText = `Autor: ${autor}`;
+
+        feedback.innerText = "✅ Livro encontrado!";
+        feedback.style.color = "#28a745";
+        resultadoDiv.style.display = "block";
+    } catch (err) {
+        console.error(err);
+        feedback.innerText = "❌ Erro ao buscar livro. Verifique sua conexão.";
+        feedback.style.color = "#d9534f";
+    }
+}
+
+// Quando o leitor solicita o empréstimo a partir da prateleira
+function solicitarEmprestimoPrateleira() {
+    if (!livroTemporarioPrat) {
+        alert('Nenhum livro selecionado. Faça uma busca primeiro.');
+        return;
+    }
+
+    const usuarioLogado = (localStorage.getItem('usuarioLogado') || '').toLowerCase();
+    if (!usuarioLogado) {
+        alert('Você precisa estar logado para solicitar um empréstimo.');
+        window.location.href = '../index.html';
+        return;
+    }
+
+    const clientes = JSON.parse(localStorage.getItem('clientes')) || [];
+    const clienteObjeto = clientes.find(c => (c.email || '').toLowerCase() === usuarioLogado);
+    const nomeCliente = clienteObjeto ? clienteObjeto.nome : usuarioLogado;
+
+    const dataHoje = new Date();
+    dataHoje.setDate(dataHoje.getDate() + 7);
+    const dataFormatada = dataHoje.toLocaleDateString('pt-BR');
+
+    const novoEmprestimo = {
+        cliente: nomeCliente,
+        clienteEmail: usuarioLogado,
+        livroTitulo: livroTemporarioPrat.titulo,
+        livroCapa: livroTemporarioPrat.capa,
+        devolucao: dataFormatada
+    };
+
+    const listaEmprestimos = JSON.parse(localStorage.getItem('emprestimos')) || [];
+    listaEmprestimos.push(novoEmprestimo);
+    localStorage.setItem('emprestimos', JSON.stringify(listaEmprestimos));
+
+    // Limpa UI e atualiza exibições
+    livroTemporarioPrat = null;
+    document.getElementById('resultadoLivroPrat').style.display = 'none';
+    document.getElementById('feedbackBuscaPrat').innerText = '';
+    document.getElementById('inputLivroPrat').value = '';
+
+    // Atualiza a prateleira do cliente e os cards da bibliotecária (quando ela abrir a página verá o novo empréstimo)
+    carregarPrateleiraCliente();
+    carregarEmprestimosCards();
+
+    alert('Pedido de empréstimo enviado com sucesso! Aguarde confirmação da bibliotecária.');
 }
