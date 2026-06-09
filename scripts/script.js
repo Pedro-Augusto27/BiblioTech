@@ -318,5 +318,5 @@ function carregarPrateleiraCliente() {
 
 function logoutCliente() {
     localStorage.removeItem('usuarioLogado'); // Limpa o login
-    window.location.href = '../../index.html'; // Volta para a tela inicial
+    window.location.href = '../index.html'; // Volta para a tela inicial
 }
